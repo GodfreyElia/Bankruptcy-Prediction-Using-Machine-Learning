@@ -1,0 +1,1070 @@
+---
+title: "Bankrupty Prediction; Raw Financial Data"
+author: "Godfrey E. Nkolokosa"
+date: "21/09/2023"
+output: html_document
+---
+
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+knitr::opts_chunk$set(
+  echo = TRUE, # show code
+  warning = TRUE, # show warnings
+  tidy = TRUE, # pretty format shown code
+  dpi = 150 # pretty charts
+)
+```
+
+**Setting working directory**
+```{r Work Directory, echo=TRUE, results='hide'}
+rm(list=ls()) #clearing envionment
+
+stat.time <- Sys.time()
+setwd("C:/Users/CeX/Desktop/Dissy Data")
+list.files()
+```
+
+
+**Loading Packages**
+```{r Libraries}
+library(readxl)
+library(readr)
+library(ipred) #bagging
+library(randomForest) #RF
+library(e1071) #SVM
+library(gbm) #boosting
+library(neuralnet) #ANN
+library(class) #kNN
+              #Accessory libraries
+library(plotROC)
+library(pROC)
+library(ROCR)
+library(ggplot2)
+library(caret)
+library(tidyverse)
+library(dslabs)
+library(Hmisc)
+library(corrplot)
+library(car)
+library(ggrepel)
+library(nortest)
+library(car)
+library(gridExtra)
+library(factoextra)# Principal Component Analysis
+library(DMwR2)
+library(boot)
+library(knitr)
+```
+
+
+
+**Section 1: Exploratory Data Analysis**
+1. Loading Data
+```{r Data}
+# Read in data
+path <- "C:\\Users\\CeX\\Desktop\\Dissy Data\\Raw_data.xlsx"
+
+#all variables
+variable_names <- read_excel(path, sheet = "Variable_names")
+kable(variable_names, caption = "Variable names")
+
+y1.all <- read_excel(path, sheet = "Year_1")
+y1.all <- mutate(y1.all, Industry = NULL, Code = NULL, totli = NULL)
+y1.all[,-1][y1.all[,-1]==0] <- NA
+
+## Removing columns and rows with greater than the threshold missing values
+threshold <- 0.10  # 1% threshold
+y1.all <- y1.all[colSums(is.na(y1.all))/nrow(y1.all)<=threshold]#removing columns with >10% NA
+y1.all<- y1.all[complete.cases(y1.all) | rowSums(is.na(y1.all)) / ncol(y1.all) < threshold, ]#removing rows  with >10% NA
+
+## Replacing remaing missing values with an appropriate measure of central tendecy
+
+y1.all <- centralImputation(y1.all)
+kable(y1.all%>%slice(1:5), caption = "Data on JSE Bankrupt and Non-Bankrupt companies: 1997 - 2022")
+```
+
+2.1 Principal Component Analysis
+```{r}
+
+# Create a new data frame with only the independent variables
+independent_vars <- y1.all[,-1]
+
+# Scale the independent variables
+independent_vars_scaled <- scale(independent_vars)
+
+# Perform the PCA
+pca <- prcomp(independent_vars_scaled, center = TRUE, scale = TRUE)
+
+# Plot the results
+fviz_eig(pca, addlabels = TRUE, ylim = c(0, 20))
+fviz_pca_var(pca, col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), repel = TRUE)
+fviz_pca_biplot(pca, label = "var", col.var = "contrib", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), repel = TRUE)
+
+
+### Checking loadigs
+loadings <- capture.output(pca$rotation)
+
+writeLines(loadings, "PCA_Features.txt")
+
+```
+
+2a.Summary Visualisation
+```{r summary visualisation}
+#Sales Growth Vs Assets Growth
+
+#Unadjusted
+data.lm <- lm(ebita~totas, data = y1.all)
+summary (data.lm)
+
+datam <- as_tibble(y1.all)%>%mutate(residuals = resid(data.lm),predicted = predict(data.lm))
+print(datam)
+
+ggplot(datam, aes(y = ebita, x = totas)) +
+  labs(y = "EBIT (Rand)",
+       x = "Total Assets (Rand)")+
+  ggtitle( "Relationship between EBIT and Total Assets")+
+  theme(plot.title = element_text(hjust = 1))+
+  geom_smooth(method = "lm", se = FALSE, color = "lightgrey") +     # regression line  
+  geom_segment(aes(xend = totas, yend = predicted), alpha = .2) +      # draw line from point to line
+  geom_point(aes(color = abs(residuals), size = abs(residuals))) +  # size of the points
+  scale_color_continuous(low = "green", high = "blue") +             # colour of the points mapped to residual 
+  guides(color = FALSE, size = FALSE) +                             # Size legend removed
+  geom_point(aes(y = predicted), shape = 1) +
+  theme_minimal()
+```
+
+2b. y1.all Cleaning
+```{r Cleaning, eval=FALSE, include=FALSE}
+head(y1.all,5)
+#Removing outliers
+# Set a cutoff value based on quantiles
+q1 <- quantile(y1.all$X1, 0.25)
+q3 <- quantile(y1.all$X1, 0.75)
+
+iqr <- 1.5 * (q3 - q1)
+lower <- q1 - iqr
+upper <- q3 + iqr
+
+# Create a new data frame that excludes outliers
+data.clean <- subset(y1.all, X1 >= lower & X1 <= upper)
+
+##Checking
+summary(data.clean)
+
+#Let's clean Using Market Cap
+
+# Set a cutoff value based on quantiles
+q5 <- quantile(data.clean$X4, 0.25)
+q7 <- quantile(data.clean$X4, 0.75)
+
+iqr <- 1.5 * (q7 - q5)
+l <- q5 - iqr
+u <- q7 + iqr
+
+# Create a new data frame that excludes outliers
+data.clean <- subset(data.clean, X4 >= l & X4 <= u)
+
+summary(data.clean)
+
+nrow(data.clean)
+```
+
+
+
+2c. Correlation Matrices
+```{r Correlation Matrice}
+#Correlation. Year 1 ALL
+correlation.data <- print(cor(y1.all, use= "complete.obs"))
+
+symnum(correlation.data)
+
+corrplot(correlation.data, type="upper", tl.pos="d", main = "Whole Group's Correlation")
+a1 <-  corrplot(correlation.data, add=TRUE, type="lower", method="number", diag=FALSE, tl.pos="n", cl.pos="n")
+
+```
+
+**Statistical Testing**
+1. Testing for Normality
+```{r}
+#Shapiro test
+shapiro_results <- print(lapply(y1.all[,-1], shapiro.test))
+shapiro.p_values <- print(sapply(shapiro_results, function(x) x$p.value))
+shapiro.stat <- print(sapply(shapiro_results, function(x) x$statistic))
+
+shapiro.data <- print(cbind(shapiro.stat, shapiro.p_values))
+
+#ad.test
+ad_results <- print(lapply(y1.all[,-1], ad.test))
+ad.p_values <- print(sapply(ad_results, function(x) x$p.value))
+ad.stat <- print(sapply(ad_results, function(x) x$statistic))
+
+ad.data <- print(cbind(ad.stat,ad.p_values))
+
+```
+
+2.Statistical Significance.
+```{r Statistical Significance}
+
+#1. Using Logic Regression
+set.seed(123) # for reproducibility
+train_index <- sample(1:nrow(y1.all), 0.7 * nrow(y1.all))
+train_data <- y1.all[train_index, ]
+test_data <- y1.all[-train_index, ]
+
+logit_model <- glm(Bankruptcy ~ ., data = train_data, family = "binomial")
+LM.sum <- summary(logit_model)
+print(LM.sum)
+
+#2. Using Spearman Correlation test
+cor_results <- mapply(function(x, y) cor.test(y, x, method = "spearman"), y1.all[,-1], y1.all[,1])
+print(cor_results)
+
+#Include
+#Adjusted p Values #logistic regression
+lM.pvalues <- print(LM.sum$coefficients[,4])
+
+adjusted_p <- p.adjust(lM.pvalues, method = "fdr")
+print(adjusted_p)
+summary(logit_model)
+
+```
+
+**Data Balance Visualisation**
+```{r Balance Visualisation}
+### Balance Visualisation
+#All data
+ggplot(y1.all,aes(x=factor(y1.all$Bankruptcy, levels = c(0,1), labels = c("Non-Bankrupt", "Bankrupt"))))+
+  geom_bar(fill = "lightblue")+ ggtitle(" Balance Visualisation: All Cases")+
+  ylab("Count") + xlab("Event Type") + scale_x_discrete(labels = c("Non-Bankrupt", "Bankrupt"))+
+  theme_bw()
+
+#training data
+ggplot(train_data,aes(x=factor(train_data$Bankruptcy, levels = c(0,1), labels = c("Non-Bankrupt", "Bankrupt"))))+
+  geom_bar(fill = "orange", alpha = 6/10)+ ggtitle(" Balance Visualisation: Training set")+
+  ylab("Count") + xlab("Event Type") + scale_x_discrete(labels = c("Non-Bankrupt", "Bankrupt"))+
+  theme_bw()
+
+#test data
+ggplot(test_data,aes(x=factor(test_data$Bankruptcy, levels = c(0,1), labels = c("Non-Bankrupt", "Bankrupt"))))+
+  geom_bar(fill = "orange", alpha = 6/10)+ ggtitle(" Balance Visualisation: Test set")+
+  ylab("Count") + xlab("Event Type") + scale_x_discrete(labels = c("Non-Bankrupt", "Bankrupt"))+
+  theme_bw()
+
+```
+
+**Section 2: Models**
+1. Random Forest
+```{r RF}
+# Split data into training and testing sets
+set.seed(123) # for reproducibility
+train_index <- sample(1:nrow(y1.all), 0.7 * nrow(y1.all))
+train_data <- y1.all[train_index, ]
+test_data <- y1.all[-train_index, ]
+
+# Train random forest model
+rf1 <- randomForest(Bankruptcy ~ ., data = train_data, ntree = 100, mtry = 3)
+rf2 <- randomForest(Bankruptcy ~ ., data = train_data, ntree = 200, mtry = 1)
+
+#OUT OF SAMPLE PERFORMANCE
+RF_ensemble_pred <- (predict(rf1, test_data) + predict(rf2, test_data)) / 2
+
+# Make predictions on test data
+RF_ensemble_pred_binary <- ifelse(RF_ensemble_pred >= 0.5, 1, 0)
+
+# Evaluate model performance (Confusion Matrix)
+RF_cm <- table(RF_ensemble_pred_binary, test_data$Bankruptcy)
+RF_accuracy.y1.all <- sum(diag(RF_cm)) / sum(RF_cm)
+
+#Accuracy
+RF_accuracy.y1.all
+y1.all.accuracy <- c()
+y1.all.accuracy <- c(y1.all.accuracy, RF = RF_accuracy.y1.all)
+
+###
+RFa1.conf.m <- confusionMatrix(data = as.factor(RF_ensemble_pred_binary),reference = as.factor(test_data$Bankruptcy))
+
+RFa1.pvalues <- RFa1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+RFa1 <- RFa1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+RFa1.errors <- c("Type 1 Error" = 1 - RFa1.conf.m$byClass["Specificity"], "Type II Error" = 1 - RFa1.conf.m$byClass["Sensitivity"])
+
+RFa1.acc <- print(round(c(RFa1,
+                          RFa1.pvalues,
+                          RFa1.errors),3))
+
+#IN-SAMPLE PERFORMANCE
+RF_ensemble_pred.in.sample <- (predict(rf1, train_data) + predict(rf2, train_data)) / 2
+# Make predictions on test data
+RF_ensemble_pred_binary.in.sample <- ifelse(RF_ensemble_pred.in.sample >= 0.5, 1, 0)
+
+# Evaluate model performance (Confusion Matrix)
+RF_cm.in.sample <- table(RF_ensemble_pred_binary.in.sample, train_data$Bankruptcy)
+RF_accuracy.y1.all.in.sample <- sum(diag(RF_cm.in.sample)) / sum(RF_cm.in.sample)
+
+#Accuracy
+RF_accuracy.y1.all.in.sample
+y1.all.accuracy.in.sample <- c()
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample, RF = RF_accuracy.y1.all.in.sample)
+
+###
+RFa1.conf.m.in.sample <- confusionMatrix(data = as.factor(RF_ensemble_pred_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+RFa1.pvalues.in.sample <- RFa1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+RFa1.in.sample <- RFa1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+RFa1.errors.in.sample <- c("Type 1 Error" = 1 - RFa1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - RFa1.conf.m.in.sample$byClass["Sensitivity"])
+
+RFa1.acc.in.sample <- round(c(RFa1.in.sample,RFa1.pvalues.in.sample,RFa1.errors.in.sample), 3)
+RFa1.acc.in.sample
+
+```
+
+2. Boosting
+```{r Boosting}
+
+# Train Boosting model
+boost_model <- gbm(Bankruptcy ~ ., data = train_data, n.trees = 1000, interaction.depth = 10, shrinkage = 0.01, distribution = "bernoulli")
+
+# Make predictions on test data
+Boosting_predictions <- predict(boost_model, newdata = test_data, n.trees = 1000, type = "response")
+
+# Convert predictions to binary classification
+boosting_predictions_binary <- ifelse(Boosting_predictions > 0.5, 1, 0)
+
+# Evaluate model performance
+Boosting_confusion_matrix <- table(boosting_predictions_binary, test_data$Bankruptcy)
+Boosting_accuracy.y1.all <- sum(diag(Boosting_confusion_matrix)) / sum(Boosting_confusion_matrix)
+
+Boosting_accuracy.y1.all
+
+y1.all.accuracy <- c(y1.all.accuracy,Boost = Boosting_accuracy.y1.all)
+
+###
+Boostinga1.conf.m <- confusionMatrix(data = as.factor(boosting_predictions_binary),reference = as.factor(test_data$Bankruptcy))
+
+Boostinga1.pvalues <- Boostinga1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+Boostinga1 <- Boostinga1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+Boostinga1.errors <- c("Type 1 Error" = 1 - Boostinga1.conf.m$byClass["Specificity"], "Type II Error" = 1 - Boostinga1.conf.m$byClass["Sensitivity"])
+
+Boostinga1.acc <- print(round(c(Boostinga1,
+                                Boostinga1.pvalues,
+                                Boostinga1.errors),3))
+
+### IN-SAMPLE PERFORMANCE
+# Make predictions on test data
+Boosting_predictions.in.sample <- predict(boost_model, newdata = train_data, n.trees = 1000, type = "response")
+
+# Convert predictions to binary classification
+boosting_predictions_binary.in.sample <- ifelse(Boosting_predictions.in.sample > 0.5, 1, 0)
+
+# Evaluate model performance
+Boosting_confusion_matrix.in.sample <- table(boosting_predictions_binary.in.sample, train_data$Bankruptcy)
+Boosting_accuracy.y1.all.in.sample <- sum(diag(Boosting_confusion_matrix.in.sample)) / sum(Boosting_confusion_matrix.in.sample)
+
+Boosting_accuracy.y1.all.in.sample
+
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,Boost = Boosting_accuracy.y1.all.in.sample)
+
+###
+Boostinga1.conf.m.in.sample <- confusionMatrix(data = as.factor(boosting_predictions_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+Boostinga1.pvalues.in.sample <- Boostinga1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+Boostinga1.in.sample <- Boostinga1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+Boostinga1.errors.in.sample <- c("Type 1 Error" = 1 - Boostinga1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - Boostinga1.conf.m.in.sample$byClass["Sensitivity"])
+
+Boostinga1.acc.in.sample <-round( c(Boostinga1.in.sample,
+                                    Boostinga1.pvalues.in.sample,
+                                    Boostinga1.errors.in.sample), 3)
+print(Boostinga1.acc.in.sample)
+
+```
+
+3. Bagging
+```{r Bagging}
+# Train Bagging model
+bag_model <- bagging(Bankruptcy ~ ., data = train_data, nbagg = 25)
+
+#OUT-OF_SAMPLE
+Bagging_predictions <- predict(bag_model, newdata = test_data)
+Bagging_predictions_binary <- ifelse(Bagging_predictions >= 0.5, 1, 0)
+
+
+# Evaluate model performance
+Bagging_confusion_matrix <- table(Bagging_predictions_binary, test_data$Bankruptcy)
+Bagging_accuracy.y1.all <- sum(diag(Bagging_confusion_matrix)) / sum(Bagging_confusion_matrix)
+
+Bagging_accuracy.y1.all
+
+y1.all.accuracy <- c(y1.all.accuracy,Bag = Bagging_accuracy.y1.all)
+
+###
+Bagginga1.conf.m <- confusionMatrix(data = as.factor(Bagging_predictions_binary),reference = as.factor(test_data$Bankruptcy))
+
+Bagginga1.pvalues <- Bagginga1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+Bagginga1 <- Bagginga1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+Bagginga1.errors <- c("Type 1 Error" = 1 - Bagginga1.conf.m$byClass["Specificity"], "Type II Error" = 1 - Bagginga1.conf.m$byClass["Sensitivity"])
+
+Bagginga1.acc <- print(round(c(Bagginga1,
+                               Bagginga1.pvalues,
+                               Bagginga1.errors),3))
+
+#IN-SAMPLE
+Bagging_predictions.in.sample <- predict(bag_model, newdata = train_data)
+Bagging_predictions_binary.in.sample <- ifelse(Bagging_predictions.in.sample >= 0.5, 1, 0)
+
+
+# Evaluate model performance
+Bagging_confusion_matrix.in.sample <- table(Bagging_predictions_binary.in.sample, train_data$Bankruptcy)
+Bagging_accuracy.y1.all.in.sample <- sum(diag(Bagging_confusion_matrix.in.sample)) / sum(Bagging_confusion_matrix.in.sample)
+
+Bagging_accuracy.y1.all.in.sample
+
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,Bag = Bagging_accuracy.y1.all.in.sample)
+
+###
+Bagginga1.conf.m.in.sample <- confusionMatrix(data = as.factor(Bagging_predictions_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+Bagginga1.pvalues.in.sample <- Bagginga1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+Bagginga1.in.sample <- Bagginga1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+Bagginga1.errors.in.sample <- c("Type 1 Error" = 1 - Bagginga1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - Bagginga1.conf.m.in.sample$byClass["Sensitivity"])
+
+Bagginga1.acc.in.sample <-round(c(Bagginga1.in.sample,
+                                  Bagginga1.pvalues.in.sample,
+                                  Bagginga1.errors.in.sample),3)
+print(Bagginga1.acc.in.sample)
+```
+
+4. Support Vector Machines
+```{r SVM}
+
+# Normalize the data
+normalized_data <- cbind(Bankruptcy = y1.all[,1], scale(y1.all[,-1]))
+head(normalized_data,5)
+
+# Split data into training and testing sets
+set.seed(123) # for reproducibility
+n.train_index <- sample(1:nrow(normalized_data), 0.7 * nrow(normalized_data))
+n.train_data <- normalized_data[n.train_index, ]
+n.test_data <- normalized_data[-n.train_index, ]
+
+#Train_model
+svm_model <- svm(Bankruptcy ~ ., data = n.train_data, kernel = "radial", cost = 10 , gamma = 0.1)
+
+#Tuned_Model
+final_model <- best.tune(svm, Bankruptcy~., data = data.frame(n.train_data),
+                 ranges = list(gamma = 2^(-1:1), cost = 2^(2:4)),
+                  tunecontrol = tune.control(sampling = "fix"))
+
+# Make predictions on test data
+SVM_predictions <- predict(final_model, newdata=n.test_data)
+SVM_predictions_binary <- ifelse(SVM_predictions>=0.5,1,0)
+
+# Evaluate model performance
+SVM_confusion_matrix <- table(SVM_predictions_binary, n.test_data[,"Bankruptcy"])
+SVM_accuracy.y1.all <- sum(diag(SVM_confusion_matrix)) / sum(SVM_confusion_matrix)
+
+SVM_accuracy.y1.all
+
+y1.all.accuracy <- c(y1.all.accuracy,SVM = SVM_accuracy.y1.all)
+
+###
+###
+SVMa1.conf.m <- confusionMatrix(data = as.factor(SVM_predictions_binary),reference = as.factor(test_data$Bankruptcy))
+
+SVMa1.pvalues <- SVMa1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+SVMa1 <- SVMa1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+SVMa1.errors <- c("Type 1 Error" = 1 - SVMa1.conf.m$byClass["Specificity"], "Type II Error" = 1 - SVMa1.conf.m$byClass["Sensitivity"])
+
+SVMa1.acc <- print(round(c(SVMa1,
+                           SVMa1.pvalues,
+                           SVMa1.errors),3))
+
+### IN OF SAMPLE
+
+# Make predictions on test data
+SVM_predictions.in.sample <- predict(final_model, newdata=n.train_data)
+SVM_predictions_binary.in.sample <- ifelse(SVM_predictions.in.sample>=0.5,1,0)
+
+# Evaluate model performance
+SVM_confusion_matrix.in.sample <- table(SVM_predictions_binary.in.sample, n.train_data[,"Bankruptcy"])
+SVM_accuracy.y1.all.in.sample <- sum(diag(SVM_confusion_matrix.in.sample)) / sum(SVM_confusion_matrix.in.sample)
+
+SVM_accuracy.y1.all.in.sample
+
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,SVM = SVM_accuracy.y1.all.in.sample)
+
+####
+SVMa1.conf.m.in.sample <- confusionMatrix(data = as.factor(SVM_predictions_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+SVMa1.pvalues.in.sample <- SVMa1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+SVMa1.in.sample <- SVMa1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+SVMa1.errors.in.sample <- c("Type 1 Error" = 1 - SVMa1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - SVMa1.conf.m.in.sample$byClass["Sensitivity"])
+
+SVMa1.acc.in.sample <- print(
+  round(c(SVMa1.in.sample,
+          SVMa1.pvalues.in.sample,
+          SVMa1.errors.in.sample),3))
+```
+
+5. Artificial Neural Networks
+```{r ANN}
+
+# Train ANN model
+ann_model <- neuralnet(Bankruptcy ~ ., data = n.train_data, hidden = 10, threshold = 0.01)
+
+# Make predictions on test data
+ANN_predictions <- neuralnet::compute(ann_model, n.test_data[, -1])
+
+# Convert predictions to binary classification
+ANN_predictions_binary <- ifelse(ANN_predictions$net.result > 0.5, 1, 0)
+
+# Evaluate model performance
+ANN_confusion_matrix <- table(ANN_predictions_binary, n.test_data[, 1])
+ANN_accuracy.y1.all <- sum(diag(ANN_confusion_matrix)) / sum(ANN_confusion_matrix)
+
+ANN_accuracy.y1.all
+y1.all.accuracy <- c(y1.all.accuracy,ANN = ANN_accuracy.y1.all)
+
+###
+ANNa1.conf.m <- confusionMatrix(data = as.factor(ANN_predictions_binary),reference = as.factor(test_data$Bankruptcy))
+
+ANNa1.pvalues <- ANNa1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+ANNa1 <- ANNa1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+ANNa1.errors <- c("Type 1 Error" = 1 - ANNa1.conf.m$byClass["Specificity"], "Type II Error" = 1 - ANNa1.conf.m$byClass["Sensitivity"])
+
+ANNa1.acc <- print(round(c(ANNa1,
+                           ANNa1.pvalues,
+                           ANNa1.errors),3))
+
+
+### IN SAMPLE PREDICTIONS
+# Make predictions on test data
+ANN_predictions.in.sample <- neuralnet::compute(ann_model, n.train_data[, -1])
+
+# Convert predictions to binary classification
+ANN_predictions_binary.in.sample <- ifelse(ANN_predictions.in.sample$net.result > 0.5, 1, 0)
+
+# Evaluate model performance
+ANN_confusion_matrix.in.sample <- table(ANN_predictions_binary.in.sample, n.train_data[, 1])
+ANN_accuracy.y1.all.in.sample <- sum(diag(ANN_confusion_matrix.in.sample)) / sum(ANN_confusion_matrix.in.sample)
+
+ANN_accuracy.y1.all
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,ANN = ANN_accuracy.y1.all.in.sample)
+
+####
+ANNa1.conf.m.in.sample <- confusionMatrix(data = as.factor(ANN_predictions_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+ANNa1.pvalues.in.sample <- ANNa1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+ANNa1.in.sample <- ANNa1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+ANNa1.errors.in.sample <- c("Type 1 Error" = 1 - ANNa1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - ANNa1.conf.m.in.sample$byClass["Sensitivity"])
+
+ANNa1.acc.in.sample <- print(
+  round(c(ANNa1.in.sample,
+          ANNa1.pvalues.in.sample,
+          ANNa1.errors.in.sample),3))
+```
+
+
+6. k- Nearest Neighbours
+```{r kNN}
+predictors <- c("Age","totas","ebita","marca","netsr","nibpd","taceq","totse","bvpsh")
+
+ response <- "Bankruptcy"
+
+
+train = train_data[predictors]
+cl = t(train_data[response])
+test = test_data[predictors]
+
+# Train kNN model
+knn_model <- knn(train, 
+                 test, 
+                 cl, 
+                 k = 50,
+                 prob = FALSE)
+
+# Evaluate model performance
+KNN_confusion_matrix <- table(knn_model, t(test_data[response]))
+kNN_accuracy.y1.all <- sum(diag(KNN_confusion_matrix)) / sum(KNN_confusion_matrix)
+
+kNN_accuracy.y1.all
+y1.all.accuracy <- c(y1.all.accuracy,kNN = kNN_accuracy.y1.all)
+
+###
+###
+kNNa1.conf.m <- confusionMatrix(data = as.factor(knn_model),reference = as.factor(test_data$Bankruptcy))
+
+kNNa1.pvalues <- kNNa1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+kNNa1 <- kNNa1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+kNNa1.errors <- c("Type 1 Error" = 1 - kNNa1.conf.m$byClass["Specificity"], "Type II Error" = 1 - kNNa1.conf.m$byClass["Sensitivity"])
+
+kNNa1.acc <- print(round(c(kNNa1,
+                           kNNa1.pvalues,
+                           kNNa1.errors),3))
+
+### IN SAMPLE PERFORMANCE
+train = train_data[predictors]
+cl = t(train_data[response])
+test = train_data[predictors]
+
+# Train kNN model
+knn_model.in.sample <- knn(train, 
+                 test, 
+                 cl, 
+                 k = 50,
+                 prob = FALSE)
+KNN_confusion_matrix.in.sample <- table(knn_model.in.sample, t(train_data[response]))
+kNN_accuracy.y1.all.in.sample <- sum(diag(KNN_confusion_matrix.in.sample)) / sum(KNN_confusion_matrix.in.sample)
+
+kNN_accuracy.y1.all.in.sample
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,kNN = kNN_accuracy.y1.all.in.sample)
+
+####
+kNNa1.conf.m.in.sample <- confusionMatrix(data = as.factor(knn_model.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+kNNa1.pvalues.in.sample <- kNNa1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+kNNa1.in.sample <- kNNa1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+kNNa1.errors.in.sample <- c("Type 1 Error" = 1 - kNNa1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - kNNa1.conf.m.in.sample$byClass["Sensitivity"])
+
+kNNa1.acc.in.sample <- print(
+  round(c(kNNa1.in.sample,
+          kNNa1.pvalues.in.sample,
+          kNNa1.errors.in.sample),3))
+```
+
+
+7. Logistic Regression
+```{r LR}
+
+# Train logistic regression model
+logit_model <- glm(Bankruptcy ~ ., data = train_data, family = "binomial")
+
+# Make predictions on test data
+LR_probabilities <- predict(logit_model, newdata = test_data, type = "response")
+
+# Convert predictions to binary classification
+LR_predictions_binary <- ifelse(LR_probabilities > 0.5, 1, 0)
+
+# Evaluate model performance
+LR_confusion_matrix <- table(LR_predictions_binary, test_data$Bankruptcy)
+LR_accuracy.y1.all <- sum(diag(LR_confusion_matrix)) / sum(LR_confusion_matrix)
+LR_accuracy.y1.all
+
+y1.all.accuracy <- c(y1.all.accuracy,LR = LR_accuracy.y1.all)
+
+###
+LRa1.conf.m <- confusionMatrix(data = as.factor(LR_predictions_binary),reference = as.factor(test_data$Bankruptcy))
+
+LRa1.pvalues <- LRa1.conf.m$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+LRa1 <- LRa1.conf.m$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+LRa1.errors <- c("Type 1 Error" = 1 - LRa1.conf.m$byClass["Specificity"], "Type II Error" = 1 - LRa1.conf.m$byClass["Sensitivity"])
+
+LRa1.acc <- print(round(c(LRa1,
+                          LRa1.pvalues,
+                          LRa1.errors),3))
+
+#### IN SAMPLE
+# Make predictions on test data
+LR_probabilities.in.sample <- predict(logit_model, newdata = train_data, type = "response")
+
+# Convert predictions to binary classification
+LR_predictions_binary.in.sample <- ifelse(LR_probabilities.in.sample > 0.5, 1, 0)
+
+# Evaluate model performance
+LR_confusion_matrix.in.sample <- table(LR_predictions_binary.in.sample, train_data$Bankruptcy)
+LR_accuracy.y1.all.in.sample <- sum(diag(LR_confusion_matrix.in.sample)) / sum(LR_confusion_matrix.in.sample)
+LR_accuracy.y1.all.in.sample
+
+y1.all.accuracy.in.sample <- c(y1.all.accuracy.in.sample,LR = LR_accuracy.y1.all.in.sample)
+
+####
+LRa1.conf.m.in.sample <- confusionMatrix(data = as.factor(LR_predictions_binary.in.sample),reference = as.factor(train_data$Bankruptcy))
+
+LRa1.pvalues.in.sample <- LRa1.conf.m.in.sample$overall[c("Accuracy","AccuracyPValue", "McnemarPValue")]
+
+LRa1.in.sample <- LRa1.conf.m.in.sample$byClass[c("Sensitivity","Specificity", "Prevalence", "Balanced Accuracy", "F1", "Precision")]
+
+LRa1.errors.in.sample <- c("Type 1 Error" = 1 - LRa1.conf.m.in.sample$byClass["Specificity"], "Type II Error" = 1 - LRa1.conf.m.in.sample$byClass["Sensitivity"])
+
+LRa1.acc.in.sample <- print(round(c(LRa1.in.sample,
+                                    LRa1.pvalues.in.sample,
+                                    LRa1.errors.in.sample),3))
+```
+
+**Feature Importance**
+```{r feature importance}
+#Random forest
+importance(rf1)
+importance(rf2)
+
+#boosting
+summary (boost_model)
+
+#bagging
+varImp(bag_model)
+```
+
+**Section 3: Model Evaluation**
+```{r Accuracy}
+
+### OUT OF SAMPLE
+y1.all.accuracy
+
+a1.chart <- barplot(y1.all.accuracy, col = "white", main = "Out of sample Accuracy: 1 Year Prior to Bankruptcy", ylab = "Accuracy", xlab = "Model")
+
+df <- as_tibble(y1.all.accuracy)
+
+
+Model <- c("RF", "Boost", "Bag" ,  "SVM"   ,"ANN"   ,"kNN"  , "LR")
+
+a1.acc.df <- cbind(Model,df)
+
+names(a1.acc.df) <- c("Model", "Accuracy")
+
+print(a1.acc.df)
+
+###
+a1.acc.plot <- ggplot(aes(x = Model, y = Accuracy), data = a1.acc.df)+
+  geom_bar(color = "gray", stat = "identity",fill = "lightblue")+
+  labs(title = "Out of Sample Accurarcy: 1-Year Prior to Failure",
+       x = "Model",
+       y = "Accuracy")+
+  geom_text(aes(label = round(Accuracy,2)), vjust = 2)+
+  theme_bw()
+print(a1.acc.plot)
+
+###
+#### Combined metrics
+metrics.table <- as_tibble(rbind(RFa1.acc,Boostinga1.acc,Bagginga1.acc,SVMa1.acc,ANNa1.acc,kNNa1.acc,LRa1.acc))
+Model <- c("RF", "Boost", "Bag" ,  "SVM"   ,"ANN"   ,"kNN"  , "LR")
+metrics.table <- print(cbind(Model,metrics.table))
+
+#write.csv(metrics.table,"a1.metrics_table.csv")
+
+### IN SAMPLE
+y1.all.accuracy.in.sample
+
+a1.chart.in.sample <- barplot(y1.all.accuracy.in.sample, col = "white", main = "In-Sample Accurarcy: 1-Year Prior to Failure", ylab = "Accuracy", xlab = "Model")
+
+df.in.sample <- as_tibble(y1.all.accuracy.in.sample)
+
+
+Model.in.sample <- c("RF", "Boost", "Bag" ,  "SVM"   ,"ANN"   ,"kNN"  , "LR")
+
+a1.acc.df.in.sample <- cbind(Model.in.sample,df.in.sample)
+
+names(a1.acc.df.in.sample) <- c("Model", "Accuracy")
+
+print(a1.acc.df.in.sample)
+
+###
+a1.acc.plot.in.sample <- ggplot(aes(x = Model, y = Accuracy), data = a1.acc.df.in.sample)+
+  geom_bar(color = "gray", stat = "identity",fill = "orange", alpha = 5/10)+
+  labs(title = "In-Sample Accurarcy: 1-Year Prior to Failure",
+       x = "Model",
+       y = "Accuracy")+
+  geom_text(aes(label = round(Accuracy,2)), vjust = 2)+
+  theme_bw()
+print(a1.acc.plot.in.sample)
+
+###
+#### Combined metrics
+metrics.table.in.sample <- as_tibble(rbind(RFa1.acc.in.sample,Boostinga1.acc.in.sample,Bagginga1.acc.in.sample,SVMa1.acc.in.sample,ANNa1.acc.in.sample,kNNa1.acc.in.sample,LRa1.acc.in.sample))
+Model <- c("RF", "Boost", "Bag" ,  "SVM"   ,"ANN"   ,"kNN"  , "LR")
+metrics.table.in.sample <- print(cbind(Model,metrics.table.in.sample))
+
+#write.csv(metrics.table.in.sample,"a1.metrics_table.in.sample.csv")
+```
+
+1. Receiver Operating Characteristic (ROC)
+```{r ROC}
+# Second Method (With Z-Score)
+#Predictions
+
+rf.pred <- ROCR::prediction(RF_ensemble_pred, test_data$Bankruptcy)
+boost.pred <- ROCR::prediction(Boosting_predictions, test_data$Bankruptcy)
+bag.pred <- ROCR::prediction(Bagging_predictions, test_data$Bankruptcy)
+svm.pred <- ROCR::prediction(SVM_predictions, n.test_data$Bankruptcy)
+ann.pred <- ROCR::prediction(unlist(ANN_predictions[["net.result"]]), n.test_data$Bankruptcy)
+knn.pred <- ROCR::prediction(as.numeric(levels(knn_model))[knn_model], test_data$Bankruptcy)
+lr.pred <- ROCR::prediction(LR_probabilities, test_data$Bankruptcy)
+
+
+#performance
+rf.perf <- performance(rf.pred, "tpr", "fpr")
+boost.perf <- performance(boost.pred, "tpr", "fpr")
+bag.perf <- performance(bag.pred, "tpr", "fpr")
+svm.perf <- performance(svm.pred, "tpr", "fpr")
+ann.perf<- performance(ann.pred, "tpr", "fpr")
+knn.perf <- performance(knn.pred, "tpr", "fpr")
+lr.perf <- performance(lr.pred, "tpr", "fpr")
+
+# AUC
+rf.auc <- performance(rf.pred, measure = "auc")@y.values[[1]]
+boost.auc <- performance(boost.pred, measure = "auc")@y.values[[1]]
+bag.auc <- performance(bag.pred, measure = "auc")@y.values[[1]]
+svm.auc <- performance(svm.pred, measure = "auc")@y.values[[1]]
+ann.auc <- performance(ann.pred, measure = "auc")@y.values[[1]]
+knn.auc <- performance(knn.pred, measure = "auc")@y.values[[1]]
+lr.auc <- performance(lr.pred, measure = "auc")@y.values[[1]]
+
+#Vector,
+a1.auc.combo <- c(rf.auc,boost.auc,bag.auc,svm.auc,ann.auc,knn.auc,lr.auc)
+round(a1.auc.combo,2)
+titles <- c("RF, auc=","Boost, auc=", "Bag, auc=", "SVM, auc=", "ANN, auc=", "kNN, auc=","LR, auc=")
+
+#Plots
+par( pty = "s",mar= c(2.5,2.5,2.5,2.5),mgp = c(1.5,0.6,0), cex.lab = 0.8, cex.axis = 0.6)
+plot(rf.perf, col="#1f77b4", lwd=1, main = "Out of Sample ROC: 1 Year Prior to Bankruptcy (All data)")
+plot(boost.perf, col="#ff7f0e", lwd=1, add=TRUE)
+plot(bag.perf, col="#2ca02c", lwd=1, lty = 2,add=TRUE)
+plot(svm.perf, col="#d62728", lwd=1, add = TRUE)
+plot(ann.perf, col="#9467bd", lwd=1, add=TRUE)
+plot(knn.perf, col="#8c564b", lwd=1, lty = 3, add=TRUE)
+plot(lr.perf, col="#e377c2", lwd=1, lty =2, add=TRUE)
+legend("bottomright", paste(titles,round(a1.auc.combo,2), sep = " "), bg ="#F5F5F5", inset = c(0.01, 0.01),
+       col=c("#1f77b4", "#ff7f0e", "#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"), lty = c(1,1,2,1,1,3,2), lwd=1, cex = 0.6)
+
+abline(a = 0, b = 1, lty = 3, lwd = 1.3, col = "gray40")
+
+
+#IN-SAMPLE
+# Second Method (With Z-Score)
+#Predictions
+rf.pred.in.sample <- ROCR::prediction(RF_ensemble_pred.in.sample, train_data$Bankruptcy)
+boost.pred.in.sample <- ROCR::prediction(Boosting_predictions.in.sample, train_data$Bankruptcy)
+bag.pred.in.sample <- ROCR::prediction(Bagging_predictions.in.sample, train_data$Bankruptcy)
+svm.pred.in.sample <- ROCR::prediction(SVM_predictions.in.sample, n.train_data$Bankruptcy)
+ann.pred.in.sample <- ROCR::prediction(unlist(ANN_predictions.in.sample[["net.result"]]), n.train_data$Bankruptcy)
+knn.pred.in.sample <- ROCR::prediction(as.numeric(levels(knn_model.in.sample))[knn_model.in.sample], train_data$Bankruptcy)
+lr.pred.in.sample <- ROCR::prediction(LR_probabilities.in.sample, train_data$Bankruptcy)
+
+
+#performance
+rf.perf.in.sample <- performance(rf.pred.in.sample, "tpr", "fpr")
+boost.perf.in.sample <- performance(boost.pred.in.sample, "tpr", "fpr")
+bag.perf.in.sample <- performance(bag.pred.in.sample, "tpr", "fpr")
+svm.perf.in.sample <- performance(svm.pred.in.sample, "tpr", "fpr")
+ann.perf.in.sample<- performance(ann.pred.in.sample, "tpr", "fpr")
+knn.perf.in.sample <- performance(knn.pred.in.sample, "tpr", "fpr")
+lr.perf.in.sample <- performance(lr.pred.in.sample, "tpr", "fpr")
+
+# AUC
+rf.auc.in.sample <- performance(rf.pred.in.sample, measure = "auc")@y.values[[1]]
+boost.auc.in.sample <- performance(boost.pred.in.sample, measure = "auc")@y.values[[1]]
+bag.auc.in.sample <- performance(bag.pred.in.sample, measure = "auc")@y.values[[1]]
+svm.auc.in.sample <- performance(svm.pred.in.sample, measure = "auc")@y.values[[1]]
+ann.auc.in.sample <- performance(ann.pred.in.sample, measure = "auc")@y.values[[1]]
+knn.auc.in.sample <- performance(knn.pred.in.sample, measure = "auc")@y.values[[1]]
+lr.auc.in.sample <- performance(lr.pred.in.sample, measure = "auc")@y.values[[1]]
+
+#Vector,
+a1.auc.combo.in.sample <- c(rf.auc.in.sample,boost.auc.in.sample,bag.auc.in.sample,svm.auc.in.sample,ann.auc.in.sample,knn.auc.in.sample,lr.auc.in.sample)
+round(a1.auc.combo.in.sample,2)
+titles <- c("RF, auc=","Boost, auc=", "Bag, auc=", "SVM, auc=", "ANN, auc=", "kNN, auc=","LR, auc=")
+
+#Plots
+a1.plot.in.sample <- par( pty = "s",mar= c(2.5,2.5,2.5,2.5),mgp = c(1.5,0.6,0), cex.lab = 0.8, cex.axis = 0.6)
+plot(rf.perf, col="#1f77b4", lwd=1, main = "In-Sample ROC: 1 Year prior to Bankruptcy")
+plot(boost.perf.in.sample, col="#ff7f0e", lwd=1, add=TRUE)
+plot(bag.perf.in.sample, col="#2ca02c", lwd=1, lty = 2,add=TRUE)
+plot(svm.perf.in.sample, col="#d62728", lwd=1, add = TRUE)
+plot(ann.perf.in.sample, col="#9467bd", lwd=1, add=TRUE)
+plot(knn.perf.in.sample, col="#8c564b", lwd=1, lty = 3, add=TRUE)
+plot(lr.perf.in.sample, col="#e377c2", lwd=1, lty =2, add=TRUE)
+
+legend("bottomright", paste(titles,round(a1.auc.combo.in.sample,2), sep = " "), bg ="#F5F5F5", inset = c(0.01, 0.01),
+       col=c("#1f77b4", "#ff7f0e", "#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"), lty = c(1,1,2,1,1,3,2), lwd=1, cex = 0.6)
+
+abline(a = 0, b = 1, lty = 3, lwd = 1.3, col = "gray40")
+```
+
+
+```{r DeLong Test}
+#Rocs
+a1.rf.roc <- roc(RF_ensemble_pred_binary, test_data$Bankruptcy)
+a1.boost.roc <- roc(boosting_predictions_binary, test_data$Bankruptcy)
+a1.bag.roc <- roc(Bagging_predictions_binary, test_data$Bankruptcy)
+a1.svm.roc <- roc(SVM_predictions_binary, n.test_data$Bankruptcy)
+a1.ann.roc <- roc(as.vector(ANN_predictions_binary), n.test_data$Bankruptcy)
+a1.knn.roc <- roc(as.numeric(levels(knn_model))[knn_model], test_data$Bankruptcy)
+a1.lr.roc <- roc(LR_predictions_binary, test_data$Bankruptcy)
+
+
+a1.delong.rf <- roc.test(a1.lr.roc,a1.rf.roc, method = "delong")
+a1.delong.boost <- roc.test(a1.lr.roc,a1.boost.roc, method = "delong")
+a1.delong.bag <- roc.test(a1.lr.roc,a1.bag.roc, method = "delong")
+a1.delong.svm <- roc.test(a1.lr.roc,a1.svm.roc, method = "delong")
+a1.delong.ann <- roc.test(a1.lr.roc,a1.ann.roc, method = "delong")
+a1.delong.knn <- roc.test(a1.lr.roc,a1.knn.roc, method = "delong")
+a1.delong.lr<- roc.test(a1.lr.roc,a1.lr.roc, method = "delong")
+
+### table of results
+rf.stats <- c(D = a1.delong.rf[["statistic"]][["D"]], df = a1.delong.rf$parameter,p.value = a1.delong.rf$p.value)
+
+boost.stats <- c(D = a1.delong.boost[["statistic"]][["D"]], df = a1.delong.boost$parameter,p.value = a1.delong.boost$p.value)
+
+bag.stats <- c(D = a1.delong.bag[["statistic"]][["D"]], df = a1.delong.bag$parameter,p.value = a1.delong.bag$p.value)
+
+svm.stats <- c(D = a1.delong.svm[["statistic"]][["D"]], df = a1.delong.svm$parameter,p.value = a1.delong.svm$p.value)
+
+ann.stats <- c(D = a1.delong.ann[["statistic"]][["D"]], df = a1.delong.ann$parameter,p.value = a1.delong.ann$p.value)
+
+knn.stats <- c(D = a1.delong.knn[["statistic"]][["D"]], df = a1.delong.knn$parameter,p.value = a1.delong.knn$p.value)
+
+#lr.stats <- c(D = a1.delong.lr[["statistic"]][["D"]], df = a1.delong.lr$parameter,p.value = a1.delong.lr$p.value)
+
+a1.delong <- rbind(rf.stats,boost.stats,bag.stats,svm.stats,ann.stats,knn.stats)
+a1.delong
+```
+
+
+```{r Bootstraping - AUC, echo=TRUE, results='hide'}
+# Load the necessary packages
+#install.packages("boot")
+
+
+# Create two example ROC curves (replace with your own data)
+a1.rf.roc <- roc(RF_ensemble_pred_binary, test_data$Bankruptcy)
+a1.boost.roc <- roc(boosting_predictions_binary, test_data$Bankruptcy)
+a1.bag.roc <- roc(Bagging_predictions_binary, test_data$Bankruptcy)
+a1.svm.roc <- roc(SVM_predictions_binary, n.test_data$Bankruptcy)
+a1.ann.roc <- roc(as.vector(ANN_predictions_binary), n.test_data$Bankruptcy)
+a1.knn.roc <- roc(as.numeric(levels(knn_model))[knn_model], test_data$Bankruptcy)
+a1.lr.roc <- roc(LR_predictions_binary, test_data$Bankruptcy)
+
+
+#RANDOM FOREST
+# Define a function to compute the difference in AUCs between two models
+a1.auc_diff.rf <- function(data, indices) {
+  a1.rf.roc.resample <- roc(RF_ensemble_pred_binary[indices], test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.rf <- auc(a1.lr.roc.resample) - auc(a1.rf.roc.resample)
+  return(a1.auc_diff.rf)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.rf <- boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.rf, R = 300)#Used 3000 but it is extremely slow on some laptops
+
+# Print the bootstrapped confidence interval
+a1.rf.ci <- boot.ci(a1.results.rf, type = "bca")
+
+
+#BOOSTING
+# Define a function to compute the difference in AUCs between two models
+a1.auc_diff.boost <- function(data, indices) {
+  a1.boost.roc.resample <- roc(boosting_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.boost <- auc(a1.lr.roc.resample) - auc(a1.boost.roc.resample)
+  return(a1.auc_diff.boost)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.boost <- print(boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.boost, R = 300))
+
+# Print the bootstrapped confidence interval
+a1.boost.ci <- print(boot.ci(a1.results.boost, type = "bca"))
+
+### Bag
+# Define a function to compute the difference in AUCs between two models
+a1.auc_diff.bag <- function(data, indices) {
+  a1.bag.roc.resample <- roc(Bagging_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.bag <- auc(a1.lr.roc.resample) - auc(a1.bag.roc.resample)
+  return(a1.auc_diff.bag)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.bag <- print(boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.bag, R = 300))
+
+# Print the bootstrapped confidence interval
+a1.bag.ci <- print(boot.ci(a1.results.bag, type = "bca"))
+
+### SVM
+a1.auc_diff.svm <- function(data, indices) {
+  a1.svm.roc.resample <- roc(SVM_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.svm <- auc(a1.lr.roc.resample) - auc(a1.svm.roc.resample)
+  return(a1.auc_diff.svm)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.svm <- print(boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.svm, R = 300))
+
+# Print the bootstrapped confidence interval
+a1.svm.ci <- print(boot.ci(a1.results.svm, type = "bca"))
+
+
+###ANN
+
+a1.auc_diff.ann <- function(data, indices) {
+  a1.ann.roc.resample <- roc(as.vector(ANN_predictions_binary[indices]), test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.ann <- auc(a1.lr.roc.resample) - auc(a1.ann.roc.resample)
+  return(a1.auc_diff.ann)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.ann <- print(boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.ann, R = 300))
+
+# Print the bootstrapped confidence interval
+a1.ann.ci <- print(boot.ci(a1.results.ann, type = "bca"))
+
+### KNN
+a1.auc_diff.knn <- function(data, indices) {
+  a1.knn.roc.resample <- roc(knn_model[indices], test_data$Bankruptcy[indices])
+  a1.lr.roc.resample <- roc(LR_predictions_binary[indices], test_data$Bankruptcy[indices])
+  a1.auc_diff.knn <- auc(a1.lr.roc.resample) - auc(a1.knn.roc.resample)
+  return(a1.auc_diff.knn)
+}
+
+# Perform bootstrapping to compare the two models
+a1.results.knn <- print(boot(data = seq(LR_predictions_binary), statistic = a1.auc_diff.knn, R = 300))
+
+# Print the bootstrapped confidence interval
+a1.knn.ci <- print(boot.ci(a1.results.knn, type = "bca"))
+
+```
+
+
+```{r Brier Score}
+#OUT of SAMPLE
+a1.results <- data.frame(cbind(Actual = test_data[,1], RF = RF_ensemble_pred,Boosting = Boosting_predictions, Bagging = Bagging_predictions, SVM = SVM_predictions, ANN = unlist(ANN_predictions[["net.result"]]),kNN = as.numeric(levels(knn_model))[knn_model], LR = LR_probabilities))
+
+a1.brier_scores <- apply(a1.results[,-1], 2, function(x) mean((a1.results[,1] - x)^2))
+print(a1.brier_scores)
+
+a1.BS.AUC <- print(cbind(a1.auc.combo,a1.brier_scores))
+
+#total time taken
+end.time <- Sys.time()
+ttaken <- end.time - stat.time
+cat("Code runtime:", ttaken, "\n")
+```
+
