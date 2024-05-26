@@ -1,6 +1,6 @@
 ## Title: Predicting Failure of Johannesburg Stock Exchange Companies Using Machine Learning
 
-#### Description
+#### 1. Description
 The dynamic nature of the contemporary business environment has made corporate failures commonplace, and so raised the alarm for corporation to start considering their going concern seriously. On the higher end, all sorts of businesses can benefit from knowing their likelihood of failure with a good degree of statistical certainty. In this project I adopt and compare 7 different techniques of predicting bankruptcy, namely:
 
   (i). Machine Learning - Ensemble
@@ -22,7 +22,7 @@ The dynamic nature of the contemporary business environment has made corporate f
   
     7. k-Nearest Neighbours
 
-#### Data
+#### 2. Data
 
 Dataset:
    
@@ -46,8 +46,21 @@ The below lists down all the independent variables used in this project. The dep
 <div align="Left">
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Variables.png"  />
 </div>
+<br>
 
+Sampling procedure:
 
+This project’s target population was all JSE companies currently existent on the exchange and those companies that delisted from the exchange between 1997 and 2022.  An initial sample consisting of 967 JSE companies was drawn from the DataStream database to begin with. Among the 967 companies, 721 companies had been delisted from the exchange between 1997 and 2023 for various reasons including bankruptcy. The rest of the companies, 246, were still listed on the exchange. The paper applied the following criteria to select the final pool of companies to use in model training, validation, and testing:
 
-    
+    1.	The company was still alive or had been delisted on the exchange between 1997 and 2022.
+    2.	All the companies have at least five years of data available (see the attached image for a concession on this).
+    3.	Those delisted, had been delisted because of bankruptcy and not any other causes such as mergers or being acquired by another company.
 
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Sample%20Selection%20Process.png"  />
+</div>
+<br>
+
+#### 3. Exploratory Data Analysis
