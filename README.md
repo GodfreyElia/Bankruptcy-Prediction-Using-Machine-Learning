@@ -26,7 +26,26 @@ The dynamic nature of the contemporary business environment has made corporate f
 
 Dataset:
    
-In this project I used data on 512 and 173 Johannesburg Stock Exchange listed companies between 1997 and 2022 obtained from DataStream database.
+This project has employed financial statements data of 512 Johannesburg Stock Exchange companies (270 dead and 242 alive) obtained from DataStream database. The companies represent 11 different industries including industrials, financials, and consumer services. 
+
+Furthermore, the data spans 25 years spanning 1997 and 2022. This has been done deliberately to capture the impact of the two prominent global crises, namely: the financial crisis of 2008 and the Covid 19 pandemic of 2019, on the predictive ability of the models being studied.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industries%20Summary.png"  />
+</div>
+<br>
+
+Variables:
+
+The below lists down all the independent variables used in this project. The dependent variable was a dummy variable called 'Bankruptcy' whereby 0 represented live companies and 1 represented defunct companies.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Variables.png"  />
+</div>
 
 
 
