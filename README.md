@@ -83,9 +83,15 @@ Descriptive statistics offers a tremendous way of appreciating how our data is s
 
 Presenting our data visually complements summary statistics by enabling us the opportunity to appreciate the distribution of our data visually. Thus we can solidify our judgements and conclusions regarding the nature of our data. In this project, I use an array of visualisations to understand the data more clearly before using it for any analysis and modeling.
 
+  3.2.1.  Distribution of Companies by Industry
 <br clear="both">
 
 <div align="Left">
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industry_Distribution.png"  />
 </div>
 <br>
+
+Briefly, one can safely conclude that there are by far many financials and industrials companies represented in the dataset than any other industry. This observation is crucial as financial statements and hence variables vary significantly by industry.
+
+3.2.1  Age Distribution of Companies by Industry.
+
