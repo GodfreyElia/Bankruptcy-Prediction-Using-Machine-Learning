@@ -68,13 +68,24 @@ This project’s target population was all JSE companies currently existent on t
 Exploring our data allows us to form judgements on the nature of our data and distribution of our variables. This is inviriable in any statistical and modeling undertakingas as it enables the analyst to gauge the suitability of the descriptors for the task at hand. In this project, I use two main methods of exploring our data, namely: descriptive statistics and graphical visualisation. 
 <br>
 
-3.2. Descriptive Statistics
+3.1. Descriptive Statistics
 
 Descriptive statistics offers a tremendous way of appreciating how our data is spread across the descriptors. The main summary statistics explored in this project include measures of central tendency, location, and dispersion.
 
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Sample%20Selection%20Process.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Summary_Stats.jpg"  />
+</div>
+<br>
+
+3.2. Graphical Visualisation
+
+Presenting our data visually complements summary statistics by enabling us the opportunity to appreciate the distribution of our data visually. Thus we can solidify our judgements and conclusions regarding the nature of our data. In this project, I use an array of visualisations to understand the data more clearly before using it for any analysis and modeling.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industry_Distribution.png"  />
 </div>
 <br>
