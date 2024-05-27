@@ -94,7 +94,9 @@ Presenting our data visually complements summary statistics by enabling us the o
 Briefly, one can safely conclude that there are by far many financials and industrials companies represented in the dataset than any other industry. This observation is crucial as financial statements and hence variables vary significantly by industry.
 
 3.2.1  Age Distribution of Companies by Industry.
-
-![image](https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/assets/92586834/62e26e0f-37d8-4fcb-a6db-869371d4a3a8)
+<div align="Left">
+  <img height="60%" width="60%" src=![image](https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/assets/92586834/62e26e0f-37d8-4fcb-a6db-869371d4a3a8)  />
+</div>
+<br>
 
 
