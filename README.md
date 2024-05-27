@@ -95,3 +95,6 @@ Briefly, one can safely conclude that there are by far many financials and indus
 
 3.2.1  Age Distribution of Companies by Industry.
 
+![image](https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/assets/92586834/62e26e0f-37d8-4fcb-a6db-869371d4a3a8)
+
+
