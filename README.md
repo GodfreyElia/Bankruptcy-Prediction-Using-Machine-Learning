@@ -93,10 +93,19 @@ Presenting our data visually complements summary statistics by enabling us the o
 
 Briefly, one can safely conclude that there are by far many financials and industrials companies represented in the dataset than any other industry. This observation is crucial as financial statements and hence variables vary significantly by industry.
 
-3.2.1  Age Distribution of Companies by Industry.
+  3.2.2  Age Distribution of Companies by Industry.
 <div align="Left">
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Distribution_by_Age.png"  />
 </div>
 <br>
 
+A keen inspection of the ages of the companies tells us that the data is skewed to the right. Thus, there are many younger companies
 
+  3.2.3. Boxplots of Variables
+
+Boxplots offer a quick way of inspecting the presence of outliers in our data which may potentially skew the results of our analysis. The below boxplots indicate the presence of ouliers in nearly all predictors with exceptions of the Age and Bankruptcy variables. However, as our data are mostly ratios, its not suprising that mean is of all the variables is centrally, towards zero.
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Boxplot%20of%20Numerical%20Variables.png"  />
+</div>
+<br>
