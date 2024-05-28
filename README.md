@@ -165,13 +165,25 @@ It is crucial that we understand the nature of our data (whether parametric or n
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/AD.png"  />
 </div>
 <br>
-Null hypothesis: The variable is parametric ie normally distributed.
+  *  Null hypothesis: The variable is parametric ie normally distributed.
+  <br>
+  *  Alternative Hypothesis : The variable is non-parametric ie not normally distributed.
+  <br>
+  *  Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
+  <br>
+  <br>
+  b. Shapiro - Wilk Test
+  <br>
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/SW.png"  />
+</div>
 <br>
-Alternative Hypothesis: The variable is non-parametric ie not normally distributed. 
-<br>
-Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
-
-
+  *  Null hypothesis: The variable is parametric ie normally distributed.
+  <br>
+  *  Alternative Hypothesis : The variable is non-parametric ie not normally distributed.
+  <br>
+  *  Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
+  <br>
 
 
 
