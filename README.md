@@ -1,6 +1,7 @@
 ## Title: Predicting Failure of Johannesburg Stock Exchange Companies Using Machine Learning
 
-#### 1. Description
+### 1. Description
+
 The dynamic nature of the contemporary business environment has made corporate failures commonplace, and so raised the alarm for corporation to start considering their going concern seriously. On the higher end, all sorts of businesses can benefit from knowing their likelihood of failure with a good degree of statistical certainty. In this project I adopt and compare 7 different techniques of predicting bankruptcy, namely:
 
   (i). Machine Learning - Ensemble
@@ -22,7 +23,7 @@ The dynamic nature of the contemporary business environment has made corporate f
   
     7. k-Nearest Neighbours
 
-#### 2. Data
+### 2. Data
 
 Dataset:
    
@@ -63,7 +64,7 @@ This project’s target population was all JSE companies currently existent on t
 </div>
 <br>
 
-#### 3. Exploratory Data Analysis
+### 3. Exploratory Data Analysis
 
 Exploring our data allows us to form judgements on the nature of our data and distribution of our variables. This is inviriable in any statistical and modeling undertakingas as it enables the analyst to gauge the suitability of the descriptors for the task at hand. In this project, I use two main methods of exploring our data, namely: descriptive statistics and graphical visualisation. 
 <br>
@@ -146,5 +147,5 @@ In our attempt to predict failure, we resorted to measure the growth assets, and
 </div>
 <br>
 
-
+### 4. Statistical Testing
 
