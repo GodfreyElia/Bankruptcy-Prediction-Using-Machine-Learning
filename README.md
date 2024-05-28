@@ -119,29 +119,32 @@ In this project, ROA has been confined to the ratio of retained earnings (as opp
 </div>
 <br>
 
-  3.2.4.  Distribution of Return on Assets by Age
-
-In this project, ROA has been confined to the ratio of retained earnings (as opposed to shareholder's profit) and total assets. Using this definition, we find that ROA is almost normally distributed for companies accross all age groups. Furthermore, the correlation between age and ROA is almost zero.
-
-<div align="Left">
-  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Return%20on%20Assets.png"  />
-</div>
-<br>
-
   3.2.5.  Book Value of Equity : Total Liabilities
 
-The ratio of a company's equity (BV) to total liabilities is a measure of solvency. This metric indicates a company's ability to manage debt and therefore deal with risk. In this project, we have compared the BVE:TLs of defunct and live companies, and we find no meaningful difference. This is more so because, gearing, as it were, is commonplace in the corporate horizon, and thus candidates of bankruptcy and non-bankruptcy alike are most likely to gear, even substantially.
+The ratio of a company's equity (BV) to total liabilities is a measure of solvency. This metric indicates a company's ability to manage debt and therefore deal with risk. In this project, we have compared the BVE:TLs of defunct and live companies, and we find no meaningful difference. This is more so because, gearing, as it were, is commonplace in the corporate horizon, and thus candidates of bankruptcy and non-bankruptcy alike are most likely to gear, sometimes substantially.
 
 <div align="Left">
-  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Return%20on%20Assets.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Book_V_E-Total_Liabilities.png"  />
 </div>
 <br>
 
-  3.2.4.  Distribution of Return on Assets by Age
+  3.2.6.  Current Ratio
 
-In this project, ROA has been confined to the ratio of retained earnings (as opposed to shareholder's profit) and total assets. Using this definition, we find that ROA is almost normally distributed for companies accross all age groups. Furthermore, the correlation between age and ROA is almost zero.
+Current ratio is one of the most important financial ratios, and it is used categorically to measure a company's liquidity and therefore its stability. By definition, current ratio assesses a company's ability to pay off its creditors (liabilites) falling due within one year using short term liquid assets. As the assessment will later prove, the current ratio has been ranked as the fourth most important descriptor and predictor of bankruptcy by the 7 models on aggregate.
 
 <div align="Left">
-  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Return%20on%20Assets.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Current_Ratio.png"  />
 </div>
 <br>
+
+  3.2.7.  Relationship Between Asset Growth and Sales Growth
+
+In our attempt to predict failure, we resorted to measure the growth assets, and sales between period x, and period x+t, such that x+t is either the period that the company died, or this data was extracted. We find a reasonable correlation between the variables.
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Assets%20Growth%20Vs%20Sales%20Growth.png"  />
+</div>
+<br>
+
+
+
