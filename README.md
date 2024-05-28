@@ -109,3 +109,12 @@ Boxplots offer a quick way of inspecting the presence of outliers in our data wh
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Boxplot%20of%20Numerical%20Variables.png"  />
 </div>
 <br>
+
+  3.2.4.  Distribution of Return on Assets by Age
+
+In this project, ROA has been confined to the ratio of retained earnings (as opposed to shareholder's profit) and total assets. Using this definition, we find that ROA is almost normally distributed for companies accross all age groups. Furthermore, the correlation between age and ROA is almost zero.
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Return%20on%20Assets.png"  />
+</div>
+<br>
