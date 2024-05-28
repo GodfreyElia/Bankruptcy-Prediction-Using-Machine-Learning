@@ -155,3 +155,11 @@ In our attempt to predict failure, we resorted to measure the growth assets, and
 
 ### 4. Statistical Testing
 
+1.  Normality test:
+
+It is crucial that we understand the nature of our data (whether parametric or non-parametric) before any subsequent statistical tests and modeling. To achieve this, I used the two popular standard normality tests: Anderson-Darling test, and Shapiro-Wilk test, it was discovered that the data were nonparametric.
+
+
+
+
+
