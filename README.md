@@ -159,6 +159,18 @@ In our attempt to predict failure, we resorted to measure the growth assets, and
 
 It is crucial that we understand the nature of our data (whether parametric or non-parametric) before any subsequent statistical tests and modeling. To achieve this, I used the two popular standard normality tests: Anderson-Darling test, and Shapiro-Wilk test, it was discovered that the data were nonparametric.
 
+  a.  AD test
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/AD.png"  />
+</div>
+<br>
+Null hypothesis: The variable is parametric ie normally distributed.
+<br>
+Alternative Hypothesis: The variable is non-parametric ie not normally distributed. 
+<br>
+Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
+
 
 
 
