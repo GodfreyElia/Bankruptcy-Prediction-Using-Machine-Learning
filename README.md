@@ -1,5 +1,11 @@
 ## Title: Predicting Failure of Johannesburg Stock Exchange Companies Using Machine Learning
 
+<br clear="both">
+
+<div align="center">
+  <img height="200" width="100%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Bankruptcy_Prediction.png"  />
+</div>
+
 ### 1. Description
 
 The dynamic nature of the contemporary business environment has made corporate failures commonplace, and so raised the alarm for corporation to start considering their going concern seriously. On the higher end, all sorts of businesses can benefit from knowing their likelihood of failure with a good degree of statistical certainty. In this project I adopt and compare 7 different techniques of predicting bankruptcy, namely:
