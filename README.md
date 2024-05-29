@@ -256,3 +256,13 @@ SECTION II: Machine Learning Modeling
 </div>
 <br>
 
+We use the above structure, train, validate and test our model. In every prediction or classification enterprise, it is pivotal to ensure that our data is trained and tested using separate datasets drawn, if possible, from the same population. This prevents our models from overtly memorising the underlying data when making predictions. I have thus included the below diagram to show how our data is balance between the training, and testing datasets.
+
+<br clear="both">
+
+<div align="Center">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Balance.png"  />
+</div>
+<br>
+
+
