@@ -277,3 +277,70 @@ We use the above workflow to train, validate and test our model. In every predic
 Random forest is a supervised ensemble learning algorithm that combines multiple decision trees to make 
 a prediction (Breiman, 2001). The basic idea behind the  random forest algorithm is to create a forest of decision trees where each tree is trained on a subset of the original data, and each branch is based on a randomly selected subset of features (Breiman, 2001).
 
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/RF.png"  />
+</div>
+<br>
+
+  5.2. Boosting Model
+
+Boosting involves training multiple models sequentially, and each subsequent model focuses on retraining on the instances that the previous models failed to learn and the results from each model are aggregated to form a final prediction (Hastie, Tibshirani & Friedman, 2009). Furthermore, like bagging, boosting can be used with a variety of different base models, including decision trees, linear regression, and logistic regression. Boosting can be used to improve the accuracy of a model, especially when there is high bias in the data. Bias is used in machine learning and statistics to mean the difference between the predicted and the actual value (Pawełek, 2019).
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Boost.png"  />
+</div>
+<br>
+  5.3. Bagging Model
+
+Bagging is an ensemble learning method that stands for bootstrap aggregating, and it involves creating multiple models on bootstrap samples of the data and combining their results to make a prediction (Hastie, Tibshirani &Friedman, 2009). Bagging can be used with a variety of different base models, including decision trees, linear regression, and logistic regression (Breimann, 1996). Bagging can improve the accuracy and robustness of a model, especially when there is high variance in the data (Breimann, 1996).
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Bag.png"  />
+</div>
+<br>
+  5.4. Support Vector Machines
+
+Support Vector Machines, or SVMs, are a widely used machine learning model, particularly for classification tasks. SVMs work by finding the hyperplane that separates the data into different classes with the maximum margin (Hua et al., 2007). The main advantage of SVMs is their ability to handle high-dimensional datasets and produce accurate predictions (Pal et al., 2016; Hua et al., 2007; & Mitchell, 1997). They are also very good at handling datasets with complex boundaries between classes (Hua et al., 2007). Furthermore, SVMs are resistant to overfitting, which is a common problem in machine learning.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/SVM.png"  />
+</div>
+<br>
+  5.5. Artifical Neural Networks
+
+Artificial Neural Networks (ANN) is a machine learning model that is inspired by the structure of the human brain (James et al., 2013). ANN is highly versatile and can be used for a wide range of machine learning problems, including classification, regression, and unsupervised learning (James et al., 2013) ANN can also handle very large datasets with high-dimensional feature spaces.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/ANN.png"  />
+</div>
+<br>
+  5.6.  k-Nearest Neighbours
+
+KNN is a type of lazy learning algorithm, meaning that it does not learn a model from the training data, but rather it memorises all the training data points and uses them to make predictions (Alpaydin, 2010). The KNN algorithm works by finding the K-nearest neighbours to a given data point in the training set and using their labels to make a prediction for that data point (Alpaydin, 2010). The value of K refers to the number of neighbours that the model should look, and larger values of K tend to produce smoother decision boundaries, while smaller values of K can lead to overfitting.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/kNN.png"  />
+</div>
+<br>
+  5.7. Logistic Regression
+
+Owing to its simplicity and interpretability, logistic regression is a choice algorithm for making binary predictions. As a linear model, logistic regression uses a sigmoid function to transform the output of a linear combination of input features into a probability of belonging to a particular class (Hastie, Tibshirani, & Friedman, 2009).
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Logit.png"  />
+</div>
+<br>
