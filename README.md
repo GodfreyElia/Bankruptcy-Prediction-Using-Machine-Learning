@@ -365,3 +365,35 @@ Owing to its simplicity and interpretability, logistic regression is a choice al
 </div>
 <br>
 
+#### Model Receiver Operating Characteristic (ROC)
+
+The final metric used, and here below presented separately, to evaluate the models is the ROC curve. In simple terms, the ROC curve measures (reveals) how much a given classification model is better than predicting with no model at all i.e. guessing outcomes (Pal et al., 2016). The ROC curve trades off between the sensitivity and the type 1 error of the model. The area under the ROC curve is called AUC. The higher the AUC the better the predictive strength of the model.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Out_of_Sample_ROC.png"  />
+</div>
+<br>
+
+### 6. Goodness of Fit
+
+To measure the goodness of fit of the models, I applied two main metrics: the brier score (BS), and AUCs of the models when tested on training data (in-sample performance) and on test data (out-of-sample performance). Briefly, the brier score is the mean squared difference between the predicted probabilities and the actual outcomes (Pal et al., 2016). The brier score is analogous to the mean squared error (MSE) in regression algorithms. The criteria outlined in the diagram below has been applied to identify a good fit, an underfit, and an overfit model. For reference, a high performance is considered to have an AUC of 80% or above, and a brier score (BS) of 20% or less (Fawcett, 2006; Vickers & Elkin, 2006). The higher (lower) the AUC score (brier score) the better the fit.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/BS%20~%20AUC%201.png"  />
+</div>
+<br>
+
+Criteria:
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/CFI.png"  />
+</div>
+<br>
+
+Source: CFI, 2022.
