@@ -39,8 +39,8 @@ Furthermore, the data spans 25 years spanning 1997 and 2022. This has been done 
 
 <br clear="both">
 
-<div align="Left">
-  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industries%20Summary.png"  />
+<div align="Center">
+  <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industries%20Summary.png"  />
 </div>
 <br>
 
