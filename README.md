@@ -200,7 +200,7 @@ The aim of this test is understand how important is each variable in determining
 
 Using the Spearmans paired t-test (predictor ~ bankruptcy) we find all variables except the solvency and retained earnings to total assets ratios to be significant in explaining bankruptcy at the 99.99% confidence level.
 
-  b. PCA
+  b. Principal Component Analysis - PCA
 
 <br clear="both">
 
@@ -217,3 +217,11 @@ Using the Spearmans paired t-test (predictor ~ bankruptcy) we find all variables
 
 The fundamental aim of PCA is to reduce the dimensions of a dataset into a smaller set of uncorrelated variables which capture most of the variance in the dataset. Because PCA can adequately identify and linearly combine variables that retain the most explanatory power in a data sample, I have adopted it in this project to aid in feature selection. PCA has reduced the original dataset of 11 quantitative descriptors into a 9-principal components dataset. A closer examination of the first and second principal components (which together explain about 36% of the variance) indicates that EBIT:Total Assets and Retained Earnings: Total Assets, for instance, have significant explanatory powers compared to the rest of the variables.
 
+The figure below shows the Eigenvalues of the PCA
+
+<br clear="both">
+
+<div align="Left">
+  <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_EV.png"  />
+</div>
+<br>
