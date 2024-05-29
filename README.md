@@ -233,10 +233,11 @@ The last test we will perform before attempting to build our models for predicti
 <br clear="both">
 
 <div align="Left">
-  <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Correlation%201.png"  />
+  <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr1.png"  />
 </div>
 <br>
 
+The image below makes it more clear to see where correlations are high, positive or negative. Overall, I determine that the data is not strongly correlated and as such all variables can be used in modelling.
 <br clear="both">
 
 <div align="Left">
