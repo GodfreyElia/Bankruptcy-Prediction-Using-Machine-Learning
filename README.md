@@ -50,7 +50,7 @@ The below lists down all the independent variables used in this project. The dep
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Variables.png"  />
 </div>
 <br>
@@ -65,7 +65,7 @@ This project’s target population was all JSE companies currently existent on t
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Sample%20Selection%20Process.png"  />
 </div>
 <br>
@@ -81,7 +81,7 @@ Descriptive statistics offers a tremendous way of appreciating how our data is s
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Summary_Stats.jpg"  />
 </div>
 <br>
@@ -93,7 +93,7 @@ Presenting our data visually complements summary statistics by enabling us the o
   3.2.1.  Distribution of Companies by Industry
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Industry_Distribution.png"  />
 </div>
 <br>
@@ -101,7 +101,7 @@ Presenting our data visually complements summary statistics by enabling us the o
 Briefly, one can safely conclude that there are by far many financials and industrials companies represented in the dataset than any other industry. This observation is crucial as financial statements and hence variables vary significantly by industry.
 
   3.2.2  Age Distribution of Companies by Industry.
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Distribution_by_Age.png"  />
 </div>
 <br>
@@ -112,7 +112,7 @@ A keen inspection of the ages of the companies tells us that the data is skewed 
 
 Boxplots offer a quick way of inspecting the presence of outliers in our data which may potentially skew the results of our analysis. The below boxplots indicate the presence of ouliers in nearly all predictors with exceptions of the Age and Bankruptcy variables. However, as our data are mostly ratios, its not suprising that mean is of all the variables is centrally, towards zero.
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Boxplot%20of%20Numerical%20Variables.png"  />
 </div>
 <br>
@@ -121,7 +121,7 @@ Boxplots offer a quick way of inspecting the presence of outliers in our data wh
 
 In this project, ROA has been confined to the ratio of retained earnings (as opposed to shareholder's profit) and total assets. Using this definition, we find that ROA is almost normally distributed for companies accross all age groups. Furthermore, the correlation between age and ROA is almost zero.
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Return%20on%20Assets.png"  />
 </div>
 <br>
@@ -130,7 +130,7 @@ In this project, ROA has been confined to the ratio of retained earnings (as opp
 
 The ratio of a company's equity (BV) to total liabilities is a measure of solvency. This metric indicates a company's ability to manage debt and therefore deal with risk. In this project, we have compared the BVE:TLs of defunct and live companies, and we find no meaningful difference. This is more so because, gearing, as it were, is commonplace in the corporate horizon, and thus candidates of bankruptcy and non-bankruptcy alike are most likely to gear, sometimes substantially.
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Book_V_E-Total_Liabilities.png"  />
 </div>
 <br>
@@ -139,7 +139,7 @@ The ratio of a company's equity (BV) to total liabilities is a measure of solven
 
 Current ratio is one of the most important financial ratios, and it is used categorically to measure a company's liquidity and therefore its stability. By definition, current ratio assesses a company's ability to pay off its creditors (liabilites) falling due within one year using short term liquid assets. As the assessment will later prove, the current ratio has been ranked as the fourth most important descriptor and predictor of bankruptcy by the 7 models on aggregate.
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Current_Ratio.png"  />
 </div>
 <br>
@@ -148,7 +148,7 @@ Current ratio is one of the most important financial ratios, and it is used cate
 
 In our attempt to predict failure, we resorted to measure the growth assets, and sales between period x, and period x+t, such that x+t is either the period that the company died, or this data was extracted. We find a reasonable correlation between the variables.
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Assets%20Growth%20Vs%20Sales%20Growth.png"  />
 </div>
 <br>
@@ -161,7 +161,7 @@ It is crucial that we understand the nature of our data (whether parametric or n
 
   a.  AD test
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/AD.png"  />
 </div>
 <br>
@@ -174,7 +174,7 @@ It is crucial that we understand the nature of our data (whether parametric or n
   <br>
   b. Shapiro - Wilk Test
   <br>
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/SW.png"  />
 </div>
 <br>
@@ -193,7 +193,7 @@ The aim of this test is understand how important is each variable in determining
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Spearman.png"  />
 </div>
 <br>
@@ -204,13 +204,13 @@ Using the Spearmans paired t-test (predictor ~ bankruptcy) we find all variables
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_2_Dimensions.png"  />
 </div>
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA1.png"  />
 </div>
 <br>
@@ -221,7 +221,7 @@ The figure below shows the Eigenvalues of the PCA
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_EV.png"  />
 </div>
 <br>
@@ -232,7 +232,7 @@ The last test we will perform before attempting to build our models for predicti
 
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr1.png"  />
 </div>
 <br>
@@ -240,7 +240,7 @@ The last test we will perform before attempting to build our models for predicti
 The image below makes it more clear to see where correlations are high, positive or negative. Overall, I determine that the data is not strongly correlated and as such all variables can be used in modelling.
 <br clear="both">
 
-<div align="Left">
+<div align="Center">
   <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr2.png"  />
 </div>
 <br>
