@@ -280,7 +280,7 @@ a prediction (Breiman, 2001). The basic idea behind the  random forest algorithm
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/RF.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/RF.png"  />
 </div>
 <br>
 
@@ -291,7 +291,7 @@ Boosting involves training multiple models sequentially, and each subsequent mod
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Boost.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Boost.png"  />
 </div>
 <br>
   5.3. Bagging Model
@@ -301,7 +301,7 @@ Bagging is an ensemble learning method that stands for bootstrap aggregating, an
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Bag.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Bag.png"  />
 </div>
 <br>
   5.4. Support Vector Machines
@@ -311,7 +311,7 @@ Support Vector Machines, or SVMs, are a widely used machine learning model, part
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/SVM.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/SVM.png"  />
 </div>
 <br>
   5.5. Artifical Neural Networks
@@ -321,7 +321,7 @@ Artificial Neural Networks (ANN) is a machine learning model that is inspired by
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/ANN.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/ANN.png"  />
 </div>
 <br>
   5.6.  k-Nearest Neighbours
@@ -331,7 +331,7 @@ KNN is a type of lazy learning algorithm, meaning that it does not learn a model
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/kNN.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/kNN.png"  />
 </div>
 <br>
   5.7. Logistic Regression
@@ -341,6 +341,6 @@ Owing to its simplicity and interpretability, logistic regression is a choice al
 <br clear="both">
 
 <div align="Left">
-  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Logit.png"  />
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Logit.png"  />
 </div>
 <br>
