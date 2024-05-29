@@ -270,12 +270,32 @@ We use the above workflow to train, validate and test our models. In every predi
 </div>
 <br>
 
+#### Performance evaluation
+
+In machine learning, the choice of the performace evaluation metric is as important as the model itself. Indeed different scholars and practitioners of the Machine Learning school recommend several evaluation metrics to be used to evaluate prediction models. Therefore, for this project I have sought to apply 7 different machine learning performance metrics to reduce interpretation error and to enhance comparability of the different models. See below the definition of the metrics and section 5 for the specific model scores.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Metrics.png"  />
+</div>
+<br>
+
 ### 5. Models
+
+In this project, I have used Rstudio (R language) to implement the machine learning models. The models were trained on 70 per cent of the sample data, and tested on the remaining 30 percent. For Support Vector Machines and Artifical Neural Networks, the data were first normalised before being applied to modelling. Furthermore, for the Random Forest model, two models with different choices of hyperparameters were used, and the final prediction was the average predictioon of the two models.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="75%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Methods.png"  />
+</div>
+<br>
 
   5.1. Random Forest
 
 Random forest is a supervised ensemble learning algorithm that combines multiple decision trees to make 
-a prediction (Breiman, 2001). The basic idea behind the  random forest algorithm is to create a forest of decision trees where each tree is trained on a subset of the original data, and each branch is based on a randomly selected subset of features (Breiman, 2001).
+a prediction (Breiman, 2001). The basic idea behind the  random forest algorithm is to create a forest of decision trees where each tree is trained on a subset of the original data, and each branch is based on a randomly selected subset of features (Breiman, 2001). 
 
 <br clear="both">
 
@@ -344,3 +364,4 @@ Owing to its simplicity and interpretability, logistic regression is a choice al
   <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Logit.png"  />
 </div>
 <br>
+
