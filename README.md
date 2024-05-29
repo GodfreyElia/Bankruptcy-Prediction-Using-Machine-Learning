@@ -397,3 +397,40 @@ Criteria:
 <br>
 
 Source: CFI, 2022.
+
+### 7. Model Ranking
+
+The most important question to answer at this stage of the project is perhaps: which classifier is the best at generalising labels? To tackle this question empirically, I have employed 2 methods to quantitatively rank the performance of the models. These methods are the De Long test and the Brier Score (BS). While all these techniques are quantitative and may ignore the qualitative aspects of the classifiers’ abilities, future projects will focus on methods that consider such factors tas he consistency of the models across time and their resilience to changes in data size.
+
+  7.1.  De Long Test
+  
+The De Long test calculates the difference in the area under the ROC curve (AUC) between two classifiers and uses this difference to construct a z-statistic and calculate a p-value. The null hypothesis for the De Long test is that the AUCs of the two classifiers are equal, and the alternative hypothesis is that they are not equal. This paper used the logistic regression classifier as the benchmark. Furthermore, the models were then ranked based on how much they outperformed the logit classifier. Based on this criterion, the De Long test ranked the models as follows, from best to least: RF, Boosting, Bagging, SVM, ANN, kNN, LR. Notice: the Random Forest model and the Boosting model tied on the first place.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Ranking1.png"  />
+</div>
+<br>
+
+  7.2. Brier Score
+
+As I defined previously, the brier score is the mean squared difference between the predicted probabilities and the actual outcomes (source: Pal et al., 2016). The Brier score always ranges from 0 to 1, with lower values indicating better predictive accuracy. Using the brier score, the models were ranked as follows, from most accurate to least accurate at 1 year prior to bankruptcy: RF, Boosting, Bagging, SVM, ANN, kNN, LR.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/Panel%20B.png"  />
+</div>
+<br>
+
+#### Verdict:
+
+From the above, we can observe that the ensemble models always rank in top 3, making it safe to conclude that they are better classifiers. Finally, the logit model which was the only pure statistical model always rank last.
+
+----
+
+Thank you!
+
+Please check my other projects [here:](https://github.com/GodfreyElia/GodfreyElia/tree/main)
+
