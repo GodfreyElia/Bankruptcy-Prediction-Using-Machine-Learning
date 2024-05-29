@@ -184,6 +184,7 @@ It is crucial that we understand the nature of our data (whether parametric or n
   <br>
   *  Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
   <br>
+  <br>
 
 4.2. Significance tests
 
@@ -222,7 +223,7 @@ The figure below shows the Eigenvalues of the PCA
 <br clear="both">
 
 <div align="Center">
-  <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_EV.png"  />
+  <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_EV.png"  />
 </div>
 <br>
 
@@ -233,7 +234,7 @@ The last test we will perform before attempting to build our models for predicti
 <br clear="both">
 
 <div align="Center">
-  <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr1.png"  />
+  <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr1.png"  />
 </div>
 <br>
 
@@ -241,9 +242,17 @@ The image below makes it more clear to see where correlations are high, positive
 <br clear="both">
 
 <div align="Center">
-  <img height="90%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr2.png"  />
+  <img height="60%" width="90%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr2.png"  />
 </div>
 <br>
 
 SECTION II: Machine Learning Modeling
 ----
+
+<br clear="both">
+
+<div align="Center">
+  <img height="60%" width="90%" src="https://github.com/GodfreyElia/Bankruptcy-Prediction-Using-Machine-Learning/blob/main/Files/MachineLStructure.png"  />
+</div>
+<br>
+
