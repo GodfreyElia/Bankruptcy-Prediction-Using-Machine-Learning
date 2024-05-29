@@ -244,3 +244,6 @@ The image below makes it more clear to see where correlations are high, positive
   <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr2.png"  />
 </div>
 <br>
+
+SECTION II: Machine Learning Modeling
+----
