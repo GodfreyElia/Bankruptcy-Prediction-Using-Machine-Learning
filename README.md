@@ -249,6 +249,7 @@ The image below makes it more clear to see where correlations are high, positive
 SECTION II: Machine Learning Modeling
 ----
 
+#### Workflow and Data balance
 <br clear="both">
 
 <div align="Left">
@@ -256,7 +257,11 @@ SECTION II: Machine Learning Modeling
 </div>
 <br>
 
-We use the above structure, train, validate and test our model. In every prediction or classification enterprise, it is pivotal to ensure that our data is trained and tested using separate datasets drawn, if possible, from the same population. This prevents our models from overtly memorising the underlying data when making predictions. I have thus included the below diagram to show how our data is balance between the training, and testing datasets.
+Source: Basavaraju et al. (2019)
+
+<br>
+
+We use the above workflow to train, validate and test our model. In every prediction or classification enterprise, it is pivotal to ensure that our data is trained and tested using separate datasets drawn, if possible, from the same population. This prevents our models from overtly memorising the underlying data when making predictions. I have thus included the below diagram to show how our data is balance between the training, and testing datasets.
 
 <br clear="both">
 
@@ -265,4 +270,10 @@ We use the above structure, train, validate and test our model. In every predict
 </div>
 <br>
 
+### 5. Models
+
+  5.1. Random Forest
+
+Random forest is a supervised ensemble learning algorithm that combines multiple decision trees to make 
+a prediction (Breiman, 2001). The basic idea behind the  random forest algorithm is to create a forest of decision trees where each tree is trained on a subset of the original data, and each branch is based on a randomly selected subset of features (Breiman, 2001).
 
