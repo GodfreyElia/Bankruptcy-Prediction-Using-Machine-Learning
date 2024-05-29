@@ -155,7 +155,7 @@ In our attempt to predict failure, we resorted to measure the growth assets, and
 
 ### 4. Statistical Testing
 
-1.  Normality test:
+4.1.  Normality test:
 
 It is crucial that we understand the nature of our data (whether parametric or non-parametric) before any subsequent statistical tests and modeling. To achieve this, I used the two popular standard normality tests: Anderson-Darling test, and Shapiro-Wilk test, it was discovered that the data were nonparametric.
 
@@ -185,7 +185,7 @@ It is crucial that we understand the nature of our data (whether parametric or n
   *  Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
   <br>
 
-2. Significance tests
+4.2. Significance tests
 
 The aim of this test is understand how important is each variable in determining the likelihood of corporate failure. We used a range of tests, the first two being the Spearmans paired t-test (inspired by the fact that our dependent variables are non-parametric) and Principle Component Analysis (CPA). Later on, I considered three more methods which involved asking the prediction models which variables they found most useful.
 
@@ -223,5 +223,23 @@ The figure below shows the Eigenvalues of the PCA
 
 <div align="Left">
   <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_EV.png"  />
+</div>
+<br>
+
+  4.3.  Correlation
+
+The last test we will perform before attempting to build our models for predicting bankruptcy is correlation test. Here, we will attempt to remove any variables that are strongly correlated as they may compromise the predictive strength of our models.
+
+<br clear="both">
+
+<div align="Left">
+  <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Correlation%201.png"  />
+</div>
+<br>
+
+<br clear="both">
+
+<div align="Left">
+  <img height="90%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Corr2.png"  />
 </div>
 <br>
