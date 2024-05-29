@@ -261,7 +261,7 @@ Source: Basavaraju et al. (2019)
 
 <br>
 
-We use the above workflow to train, validate and test our model. In every prediction or classification enterprise, it is pivotal to ensure that our data is trained and tested using separate datasets drawn, if possible, from the same population. This prevents our models from overtly memorising the underlying data when making predictions. I have thus included the below diagram to show how our data is balance between the training, and testing datasets.
+We use the above workflow to train, validate and test our models. In every prediction or classification enterprise, it is pivotal to ensure that our data is trained and tested using separate datasets drawn, if possible, from the same population. This prevents our models from overtly memorising the underlying data when making predictions. I have thus included the below diagram to show how our data is balance between the training, and testing datasets.
 
 <br clear="both">
 
