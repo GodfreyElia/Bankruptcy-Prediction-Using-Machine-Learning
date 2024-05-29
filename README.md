@@ -185,5 +185,35 @@ It is crucial that we understand the nature of our data (whether parametric or n
   *  Conclusion: Reject the null hypothesis in favour of the alternative hypothesis.
   <br>
 
+2. Significance tests
 
+The aim of this test is understand how important is each variable in determining the likelihood of corporate failure. We used a range of tests, the first two being the Spearmans paired t-test (inspired by the fact that our dependent variables are non-parametric) and Principle Component Analysis (CPA). Later on, I considered three more methods which involved asking the prediction models which variables they found most useful.
+
+  a. Spearman's Paired T-test
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/Spearman.png"  />
+</div>
+<br>
+
+Using the Spearmans paired t-test (predictor ~ bankruptcy) we find all variables except the solvency and retained earnings to total assets ratios to be significant in explaining bankruptcy at the 99.99% confidence level.
+
+  b. PCA
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA_2_Dimensions.png"  />
+</div>
+
+<br clear="both">
+
+<div align="Left">
+  <img height="60%" width="60%" src="https://github.com/GodfreyElia/bankruptcy_prediction_with_rawdata/blob/main/Files/PCA1.png"  />
+</div>
+<br>
+
+The fundamental aim of PCA is to reduce the dimensions of a dataset into a smaller set of uncorrelated variables which capture most of the variance in the dataset. Because PCA can adequately identify and linearly combine variables that retain the most explanatory power in a data sample, I have adopted it in this project to aid in feature selection. PCA has reduced the original dataset of 11 quantitative descriptors into a 9-principal components dataset. A closer examination of the first and second principal components (which together explain about 36% of the variance) indicates that EBIT:Total Assets and Retained Earnings: Total Assets, for instance, have significant explanatory powers compared to the rest of the variables.
 
